@@ -7,7 +7,7 @@ namespace ClipClip
     public partial class MainForm : Form
     {
         private GlobalHotkey pasteHotkey;
-        private QueuedClipboardManager queuedClipboardManager;
+        private ClipboardRing clipboardRing;
 
         public MainForm()
         {
@@ -20,8 +20,8 @@ namespace ClipClip
             pasteHotkey = new GlobalHotkey(GlobalHotkey.Modifiers.CTRL + GlobalHotkey.Modifiers.SHIFT, (Int32)Keys.V, Handle);
             pasteHotkey.Register();
 
-            queuedClipboardManager = new QueuedClipboardManager(2);
-            queuedClipboardManager.SubscribeToClipboard(Handle);
+            clipboardRing = new ClipboardRing(2);
+            clipboardRing.SubscribeToClipboard(Handle);
         }
 
         private ContextMenu CreateContextMenu()
@@ -55,12 +55,12 @@ namespace ClipClip
             {
                 HandleHotkey(message);
             }
-            else if (message.Msg == QueuedClipboardManager.WM_DRAWCLIPBOARD)
+            else if (message.Msg == ClipboardRing.WM_DRAWCLIPBOARD)
             {
                 HandleClipboardChange(message);
                 return;
             }
-            else if (message.Msg == QueuedClipboardManager.WM_CHANGECBCHAIN)
+            else if (message.Msg == ClipboardRing.WM_CHANGECBCHAIN)
             {
                 HandleClipboardSubscriberChainChange(message);
                 return;
@@ -73,18 +73,18 @@ namespace ClipClip
         {
             if (message.WParam.ToInt32() == pasteHotkey.GetHashCode())
             {
-                queuedClipboardManager.PasteNext();
+                clipboardRing.PasteNext();
             }
         }
 
         private void HandleClipboardChange(Message message)
         {
-            queuedClipboardManager.HandleNewValue(message);
+            clipboardRing.HandleNewValue(message);
         }
 
         private void HandleClipboardSubscriberChainChange(Message message)
         {
-            queuedClipboardManager.HandleSubscriberChainChange(message);
+            clipboardRing.HandleSubscriberChainChange(message);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

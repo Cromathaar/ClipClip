@@ -13,7 +13,6 @@ namespace ClipClip
         static void Main()
         {
             var mainForm = new MainForm();
-            //var bgForm = new BackgroundForm();
             Application.Run();
         }
     }

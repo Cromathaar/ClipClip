@@ -5,15 +5,15 @@ using System.Windows.Forms;
 
 namespace ClipClip
 {
-    public class QueuedClipboardManager
+    public class ClipboardRing
     {
         public const Int32 WM_DRAWCLIPBOARD = 0x0308;
         public const Int32 WM_CHANGECBCHAIN = 0x030D;
 
         private IntPtr nextClipboardSubscriber;
-        private QueuedClipboard<String> clipQueue;
         private CircularList<String> circularList;
 
+        #region WinApi Imported Functions
         [DllImport("user32.dll")]
         protected static extern Int32 SetClipboardViewer(Int32 hWndNewViewer);
 
@@ -40,11 +40,11 @@ namespace ClipClip
 
         [DllImport("user32.dll")]
         private static extern Boolean ClientToScreen(IntPtr hWnd, ref Point lpPoint);
+        #endregion
 
-        public QueuedClipboardManager(Byte clipboardDepth)
+        public ClipboardRing(Byte ringDepth)
         {
-            clipQueue = new QueuedClipboard<String>(clipboardDepth);
-            circularList = new CircularList<String>(clipboardDepth);
+            circularList = new CircularList<String>(ringDepth);
         }
 
         public void SubscribeToClipboard(IntPtr handle)
@@ -73,17 +73,13 @@ namespace ClipClip
 
         public void HandleNewValue(Message message)
         {
-            if (clipQueue != null)
+            if (Clipboard.ContainsText())
             {
-                if (Clipboard.ContainsText())
-                {
-                    String clip = Clipboard.GetText();
+                String clip = Clipboard.GetText();
 
-                    if (ClipNotADuplicate(clip))
-                    {
-                        clipQueue.Enqueue(Clipboard.GetText());
-                        circularList.Add(Clipboard.GetText());
-                    }
+                if (ClipNotADuplicate(clip))
+                {
+                    circularList.Add(Clipboard.GetText());
                 }
             }
 
@@ -92,7 +88,6 @@ namespace ClipClip
 
         private Boolean ClipNotADuplicate(String clip)
         {
-            //return clipQueue.Count == 0 || clip != clipQueue.Peek();
             return circularList.Count == 0 || clip != circularList.GetCurrent();
         }
 
@@ -125,17 +120,11 @@ namespace ClipClip
 
         public void PasteNext()
         {
-            if (clipQueue.Count == 0)
-            {
-                return;
-            }
-
             if (circularList.Count == 0)
             {
                 return;
             }
 
-            //Clipboard.SetText(clipQueue.Dequeue());
             Clipboard.SetText(circularList.GetNext());
 
             IntPtr foregroundWindowHandle = GetForegroundWindow();

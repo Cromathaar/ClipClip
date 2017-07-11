@@ -46,9 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CircularList.cs" />
-    <Compile Include="QueuedClipboard.cs" />
     <Compile Include="GlobalHotkey.cs" />
-    <Compile Include="QueuedClipboardManager.cs" />
+    <Compile Include="ClipboardRing.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -40,12 +40,6 @@ namespace ClipClip
             return items[index];
         }
 
-        public T GetPrev()
-        {
-            index = (items.Count + index - 1) % items.Count;
-            return items[index];
-        }
-
         public Int32 Count {
             get {
                 return items.Count;
