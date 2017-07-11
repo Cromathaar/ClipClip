@@ -18,13 +18,10 @@ namespace ClipClip
 
         public void Add(T item)
         {
-            if (items.Count < itemCount)
+            items.Insert(0, item);
+
+            if (items.Count > itemCount)
             {
-                items.Add(item);
-            }
-            else
-            {
-                items.Insert(0, item);
                 items.RemoveAt(items.Count - 1);
             }
         }
