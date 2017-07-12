@@ -9,6 +9,7 @@ namespace ClipClip
     {
         public const Int32 WM_DRAWCLIPBOARD = 0x0308;
         public const Int32 WM_CHANGECBCHAIN = 0x030D;
+        public const Int32 WM_PASTE = 0x0302;
 
         private IntPtr nextClipboardSubscriber;
         private CircularList<String> circularList;
@@ -140,7 +141,7 @@ namespace ClipClip
 
             IntPtr focusedControlHandle = GetFocus();
 
-            SendMessage(focusedControlHandle, 0x0302, IntPtr.Zero, IntPtr.Zero);
+            SendMessage(focusedControlHandle, WM_PASTE, IntPtr.Zero, IntPtr.Zero);
 
             if (foregroundWindowThreadId != currentThreadId)
             {
