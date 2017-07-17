@@ -1,0 +1,3 @@
+﻿CLipClip is a simple utility that implements a ring clipboard in Windows OS. You copy with Ctrl+C hotkey as usual and then paste continuosly 
+with Ctrl+Shift+V key combination. Works for Windows controls only, so no browsers or any other web controls of any kind (like Slask) are
+supported.
