@@ -136,17 +136,32 @@ namespace ClipClip
 
             if (foregroundWindowThreadId != currentThreadId)
             {
-                AttachThreadInput((IntPtr)currentThreadId, (IntPtr)foregroundWindowThreadId, true);
+                AttachThreadInput((IntPtr)currentThreadId, (IntPtr)foregroundWindowThreadId);
             }
 
             IntPtr focusedControlHandle = GetFocus();
 
-            SendMessage(focusedControlHandle, WM_PASTE, IntPtr.Zero, IntPtr.Zero);
+            PasteToControl(focusedControlHandle);
 
             if (foregroundWindowThreadId != currentThreadId)
             {
-                AttachThreadInput((IntPtr)currentThreadId, (IntPtr)foregroundWindowThreadId, false);
+                DetachThreadInput((IntPtr)currentThreadId, (IntPtr)foregroundWindowThreadId);
             }
+        }
+
+        private void AttachThreadInput(IntPtr sourceThreadHandle, IntPtr targetThreadHandle)
+        {
+            AttachThreadInput((IntPtr)sourceThreadHandle, (IntPtr)targetThreadHandle, true);
+        }
+
+        private void PasteToControl(IntPtr controlHandle)
+        {
+            SendMessage(controlHandle, WM_PASTE, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        private void DetachThreadInput(IntPtr sourceThreadHandle, IntPtr targetThreadHandle)
+        {
+            AttachThreadInput((IntPtr)sourceThreadHandle, (IntPtr)targetThreadHandle, false);
         }
     }
 }

@@ -6,6 +6,8 @@ namespace ClipClip
 {
     public partial class MainForm : Form
     {
+        private const Byte CLIPBOARD_RING_DEPTH = 2;
+
         private GlobalHotkey pasteHotkey;
         private ClipboardRing clipboardRing;
 
@@ -20,7 +22,7 @@ namespace ClipClip
             pasteHotkey = new GlobalHotkey(GlobalHotkey.Modifiers.CTRL + GlobalHotkey.Modifiers.SHIFT, (Int32)Keys.V, Handle);
             pasteHotkey.Register();
 
-            clipboardRing = new ClipboardRing(2);
+            clipboardRing = new ClipboardRing(CLIPBOARD_RING_DEPTH);
             clipboardRing.SubscribeToClipboard(Handle);
         }
 
@@ -28,19 +30,11 @@ namespace ClipClip
         {
             var contextMenu = new ContextMenu();
 
-            var settingItem = new MenuItem("Settings", new EventHandler(MenuSettingsItem_Click));
             var exitItem = new MenuItem("Exit", new EventHandler(MenuExitItem_Click));
 
-            contextMenu.MenuItems.Add(settingItem);
             contextMenu.MenuItems.Add(exitItem);
 
             return contextMenu;
-        }
-
-        private void MenuSettingsItem_Click(Object sender, EventArgs e)
-        {
-            var settingsForm = new SettingsForm();
-            settingsForm.Show();
         }
 
         private void MenuExitItem_Click(Object sender, EventArgs e)
